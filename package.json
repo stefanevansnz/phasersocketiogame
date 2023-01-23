@@ -1,15 +1,17 @@
 {
-  "name": "phaser_tut2",
+  "name": "phaser_game",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "webpack"
   },
-  "author": "Scott Westover",
-  "license": "ISC",
+  "author": "Stefan Evans",
   "dependencies": {
     "express": "^4.16.3",
-    "socket.io": "^2.1.0"
+    "socket.io": "^2.1.0",
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.2.3"
   }
 }
