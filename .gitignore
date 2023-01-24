@@ -1,3 +1,8 @@
 node_modules
 package-lock.json
 dist
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/terraform.tfstate
+terraform/kubeconfig_gamecluster
+terraform/terraform.tfstate.backup

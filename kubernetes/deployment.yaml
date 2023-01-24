@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: game-app
+  namespace: games  
+spec:
+  selector:
+    matchLabels:
+      name: game-app
+  template:
+    metadata:
+      labels:
+        name: game-app
+    spec:
+      containers:
+      - name: app
+        image: 915922766016.dkr.ecr.ap-southeast-2.amazonaws.com/game-repo:v1
+        ports:
+          - containerPort: 8082
+      imagePullSecrets:
+          - name: regcred
