@@ -1,5 +1,6 @@
 var config = {
   type: Phaser.AUTO,
+  backgroundColor: '#69c4df',  
   parent: 'phaser-example',
   width: 800,
   height: 600,
@@ -20,9 +21,9 @@ var config = {
 var game = new Phaser.Game(config);
 
 function preload() {
-  this.load.image('ship', 'assets/spaceShips_001.png');
-  this.load.image('otherPlayer', 'assets/enemyBlack5.png');
-  this.load.image('star', 'assets/star_gold.png');
+  this.load.image('ship', 'assets/friendly_unicorn.png');
+  this.load.image('otherPlayer', 'assets/friendly_unicorn.png');
+  this.load.image('star', 'assets/rainbow.png');
 }
 
 function create() {
@@ -58,8 +59,8 @@ function create() {
   });
   this.cursors = this.input.keyboard.createCursorKeys();
 
-  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#0000FF' });
-  this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#FF0000' });
+  this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#7777FF' });
+  this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#FF7777' });
   
   this.socket.on('scoreUpdate', function (scores) {
     self.blueScoreText.setText('Blue: ' + scores.blue);
@@ -76,11 +77,11 @@ function create() {
 }
 
 function addPlayer(self, playerInfo) {
-  self.ship = self.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+  self.ship = self.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
   if (playerInfo.team === 'blue') {
-    self.ship.setTint(0x0000ff);
+    self.ship.setTint(0x7777ff);
   } else {
-    self.ship.setTint(0xff0000);
+    self.ship.setTint(0xff7777);
   }
   self.ship.setDrag(100);
   self.ship.setAngularDrag(100);
@@ -88,11 +89,11 @@ function addPlayer(self, playerInfo) {
 }
 
 function addOtherPlayers(self, playerInfo) {
-  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5).setDisplaySize(53, 40);
+  const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
   if (playerInfo.team === 'blue') {
-    otherPlayer.setTint(0x0000ff);
+    otherPlayer.setTint(0x7777ff);
   } else {
-    otherPlayer.setTint(0xff0000);
+    otherPlayer.setTint(0xff7777);
   }
   otherPlayer.playerId = playerInfo.playerId;
   self.otherPlayers.add(otherPlayer);
