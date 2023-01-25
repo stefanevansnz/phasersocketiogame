@@ -1,7 +1,7 @@
 var config = {
   type: Phaser.AUTO,
   backgroundColor: '#69c4df',  
-  parent: 'phaser-example',
+  parent: 'phaser-game',
   width: 800,
   height: 600,
   physics: {
@@ -21,9 +21,9 @@ var config = {
 var game = new Phaser.Game(config);
 
 function preload() {
-  this.load.image('ship', 'assets/friendly_unicorn.png');
+  this.load.image('player', 'assets/friendly_unicorn.png');
   this.load.image('otherPlayer', 'assets/friendly_unicorn.png');
-  this.load.image('star', 'assets/rainbow.png');
+  this.load.image('goal', 'assets/rainbow.png');
 }
 
 function create() {
@@ -67,25 +67,25 @@ function create() {
     self.redScoreText.setText('Red: ' + scores.red);
   });
 
-  this.socket.on('starLocation', function (starLocation) {
-    if (self.star) self.star.destroy();
-    self.star = self.physics.add.image(starLocation.x, starLocation.y, 'star');
-    self.physics.add.overlap(self.ship, self.star, function () {
-      this.socket.emit('starCollected');
+  this.socket.on('goalLocation', function (goalLocation) {
+    if (self.goal) self.goal.destroy();
+    self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
+    self.physics.add.overlap(self.player, self.goal, function () {
+      this.socket.emit('goalCollected');
     }, null, self);
   });
 }
 
 function addPlayer(self, playerInfo) {
-  self.ship = self.physics.add.image(playerInfo.x, playerInfo.y, 'ship').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
+  self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
   if (playerInfo.team === 'blue') {
-    self.ship.setTint(0x7777ff);
+    self.player.setTint(0x7777ff);
   } else {
-    self.ship.setTint(0xff7777);
+    self.player.setTint(0xff7777);
   }
-  self.ship.setDrag(100);
-  self.ship.setAngularDrag(100);
-  self.ship.setMaxVelocity(200);
+  self.player.setDrag(100);
+  self.player.setAngularDrag(100);
+  self.player.setMaxVelocity(200);
 }
 
 function addOtherPlayers(self, playerInfo) {
@@ -100,35 +100,35 @@ function addOtherPlayers(self, playerInfo) {
 }
 
 function update() {
-  if (this.ship) {
+  if (this.player) {
     if (this.cursors.left.isDown) {
-      this.ship.setAngularVelocity(-150);
+      this.player.setAngularVelocity(-150);
     } else if (this.cursors.right.isDown) {
-      this.ship.setAngularVelocity(150);
+      this.player.setAngularVelocity(150);
     } else {
-      this.ship.setAngularVelocity(0);
+      this.player.setAngularVelocity(0);
     }
   
     if (this.cursors.up.isDown) {
-      this.physics.velocityFromRotation(this.ship.rotation + 1.5, 100, this.ship.body.acceleration);
+      this.physics.velocityFromRotation(this.player.rotation + 1.5, 100, this.player.body.acceleration);
     } else {
-      this.ship.setAcceleration(0);
+      this.player.setAcceleration(0);
     }
   
-    this.physics.world.wrap(this.ship, 5);
+    this.physics.world.wrap(this.player, 5);
 
     // emit player movement
-    var x = this.ship.x;
-    var y = this.ship.y;
-    var r = this.ship.rotation;
-    if (this.ship.oldPosition && (x !== this.ship.oldPosition.x || y !== this.ship.oldPosition.y || r !== this.ship.oldPosition.rotation)) {
-      this.socket.emit('playerMovement', { x: this.ship.x, y: this.ship.y, rotation: this.ship.rotation });
+    var x = this.player.x;
+    var y = this.player.y;
+    var r = this.player.rotation;
+    if (this.player.oldPosition && (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y || r !== this.player.oldPosition.rotation)) {
+      this.socket.emit('playerMovement', { x: this.player.x, y: this.player.y, rotation: this.player.rotation });
     }
     // save old position data
-    this.ship.oldPosition = {
-      x: this.ship.x,
-      y: this.ship.y,
-      rotation: this.ship.rotation
+    this.player.oldPosition = {
+      x: this.player.x,
+      y: this.player.y,
+      rotation: this.player.rotation
     };
   }
 }
