@@ -6,3 +6,4 @@ terraform/.terraform.lock.hcl
 terraform/terraform.tfstate
 terraform/kubeconfig_gamecluster
 terraform/terraform.tfstate.backup
+terraform/.terraform.tfstate.lock.info

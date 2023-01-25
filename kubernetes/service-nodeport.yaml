@@ -7,6 +7,6 @@ spec:
   type: NodePort
   ports:
   - port: 80
-    targetPort: 8082
+    targetPort: 3070
   selector:
     name: game-app

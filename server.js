@@ -69,6 +69,6 @@ io.on('connection', function (socket) {
   });
 });
 
-server.listen(8082, function () {
-  console.log(`Listening on ${server.address().port}`);
+server.listen(3070, function () {
+  console.log(`Game is listening on ${server.address().port}`);
 });

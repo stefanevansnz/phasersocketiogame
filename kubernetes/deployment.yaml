@@ -16,6 +16,6 @@ spec:
       - name: app
         image: 915922766016.dkr.ecr.ap-southeast-2.amazonaws.com/game-repo:v1
         ports:
-          - containerPort: 8082
+          - containerPort: 3070
       imagePullSecrets:
           - name: regcred
