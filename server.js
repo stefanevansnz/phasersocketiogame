@@ -70,5 +70,5 @@ io.on('connection', function (socket) {
 });
 
 server.listen(3070, function () {
-  console.log(`Game is listening on ${server.address().port}`);
+  console.log(`Unicorn Game is listening on ${server.address().port}`);
 });
