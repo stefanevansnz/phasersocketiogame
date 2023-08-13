@@ -8,12 +8,19 @@ class UnicornGame extends Phaser.Scene
   parent;
   sizer;
   player;
+  otherPlayer;
   otherPlayers;
+
+  joyStickState = '';
 
   preload() {
     this.load.image('player', 'assets/friendly_unicorn.png');
     this.load.image('otherPlayer', 'assets/friendly_unicorn.png');
     this.load.image('goal', 'assets/rainbow.png');
+
+    var url;
+    url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
+    this.load.plugin('rexvirtualjoystickplugin', url, true);
   }
 
   create() {
@@ -31,6 +38,20 @@ class UnicornGame extends Phaser.Scene
     this.updateCamera();
 
     this.scale.on('resize', this.resize, this);
+
+    this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+      x: width / 2,
+      y: height / 2,
+      radius: 100,
+      base: this.add.circle(0, 0, 100, 0x888888),
+      thumb: this.add.circle(0, 0, 50, 0xcccccc),
+      // dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
+      // forceMin: 16,
+      // enable: true
+    })
+    .on('update', this.dumpJoyStickState, this);
+
+    this.dumpJoyStickState();
 
     // game below
     var self = this;
@@ -109,15 +130,15 @@ class UnicornGame extends Phaser.Scene
 
   update() {
     if (this.player) {
-      if (this.cursors.left.isDown) {
+      if (this.cursors.left.isDown || this.joyStickState == 'Key down: left ' || this.joyStickState == 'Key down: up left ' ) {
         this.player.setAngularVelocity(-150);
-      } else if (this.cursors.right.isDown) {
+      } else if (this.cursors.right.isDown || this.joyStickState == 'Key down: right ' || this.joyStickState == 'Key down: up right ') {
         this.player.setAngularVelocity(150);
       } else {
         this.player.setAngularVelocity(0);
       }
     
-      if (this.cursors.up.isDown) {
+      if (this.cursors.up.isDown || this.joyStickState == 'Key down: up ' || this.joyStickState == 'Key down: up left ' || this.joyStickState == 'Key down: up right ') {
         this.physics.velocityFromRotation(this.player.rotation + 1.5, 100, this.player.body.acceleration);
       } else {
         this.player.setAcceleration(0);
@@ -153,7 +174,8 @@ class UnicornGame extends Phaser.Scene
   {
       const width = gameSize.width;
       const height = gameSize.height;
-
+      console.log('size width: ' + width + ' height:' + height);
+      
       this.parent.setSize(width, height);
       this.sizer.setSize(width, height);
 
@@ -178,14 +200,41 @@ class UnicornGame extends Phaser.Scene
   {
       return this.cameras.main.zoom;
   }
+
+  dumpJoyStickState() {
+    //console.log('create dumpJoyStickState');
+    var cursorKeys = this.joyStick.createCursorKeys();
+    var s = 'Key down: ';
+    var localState = '';
+    for (var name in cursorKeys) {
+        if (cursorKeys[name].isDown) {
+            s += `${name} `;
+        }
+    }
+    localState = s;
+
+    s += `
+        Force: ${Math.floor(this.joyStick.force * 100) / 100}
+        Angle: ${Math.floor(this.joyStick.angle * 100) / 100}
+        `;
+
+    s += '\nTimestamp:\n';
+    for (var name in cursorKeys) {
+        var key = cursorKeys[name];
+        s += `${name}: duration=${key.duration / 1000}\n`;
+    }
+    //this.text.setText(s);
+    this.joyStickState = localState;
+    console.log('localState = ' + localState);
+  }
 }
 
 var config = {
   type: Phaser.AUTO,
   backgroundColor: '#69c4df',  
   parent: 'phaser-game',
-  width: 800,
-  height: 600,
+  width: 640,
+  height: 960,
   physics: {
     default: 'arcade',
     arcade: {
