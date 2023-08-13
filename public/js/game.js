@@ -8,6 +8,7 @@ class UnicornGame extends Phaser.Scene
   parent;
   sizer;
   player;
+  otherPlayers;
 
   preload() {
     this.load.image('player', 'assets/friendly_unicorn.png');
@@ -62,10 +63,11 @@ class UnicornGame extends Phaser.Scene
         }
       });
     });
+    ////
     this.cursors = this.input.keyboard.createCursorKeys();
 
     this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#7777FF' });
-    this.redScoreText = this.add.text(584, 16, '', { fontSize: '32px', fill: '#FF7777' });
+    this.redScoreText = this.add.text(484, 16, '', { fontSize: '32px', fill: '#FF7777' });
     
     this.socket.on('scoreUpdate', function (scores) {
       self.blueScoreText.setText('Blue: ' + scores.blue);
