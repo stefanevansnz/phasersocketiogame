@@ -10,8 +10,6 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
-data "aws_availability_zones" "available" {}
-
 locals {
   cluster_name = "gamecluster"
 }
@@ -24,10 +22,11 @@ provider "kubernetes" {
 
 module "eks-kubeconfig" {
   source  = "hyperbadger/eks-kubeconfig/aws"
-  version = "1.0.0"
+  version = "2.0.0"
 
   depends_on = [module.eks]
-  cluster_id = module.eks.cluster_id
+  #cluster_id = module.eks.cluster_id
+  cluster_name = local.cluster_name
 }
 
 resource "local_file" "kubeconfig" {
@@ -37,13 +36,13 @@ resource "local_file" "kubeconfig" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "3.18.1"
+  version = "5.1.1"
 
   name                 = "game-vpc"
   cidr                 = "172.16.0.0/16"
-  azs                  = data.aws_availability_zones.available.names
-  private_subnets      = ["172.16.1.0/24", "172.16.2.0/24", "172.16.3.0/24"]
-  public_subnets       = ["172.16.4.0/24", "172.16.5.0/24", "172.16.6.0/24"]
+  azs                  = ["ap-southeast-2a", "ap-southeast-2b"]
+  private_subnets      = ["172.16.1.0/24", "172.16.2.0/24"]
+  public_subnets       = ["172.16.3.0/24", "172.16.4.0/24"]
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
@@ -71,7 +70,7 @@ module "eks" {
   eks_managed_node_groups = {
     game_node_group = {
       desired_capacity = 1
-      max_capacity     = 10
+      max_capacity     = 2
       min_capacity     = 1
 
       instance_type = "t3.medium"

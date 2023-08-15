@@ -8,7 +8,8 @@ class UnicornGame extends Phaser.Scene
   parent;
   sizer;
   player;
-  otherPlayer;
+  playerText;
+
   otherPlayers;
 
   joyStickState = '';
@@ -72,15 +73,15 @@ class UnicornGame extends Phaser.Scene
     this.socket.on('disconnect', function (playerId) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
-          self.otherPlayer.destroy();
+          otherPlayer.destroy();
         }
       });
     });
     this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerInfo.playerId === otherPlayer.playerId) {
-          self.otherPlayer.setRotation(playerInfo.rotation);
-          self.otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+          otherPlayer.setRotation(playerInfo.rotation);
+          otherPlayer.setPosition(playerInfo.x, playerInfo.y);
         }
       });
     });
@@ -105,8 +106,12 @@ class UnicornGame extends Phaser.Scene
   }
 
   addPlayer(self, playerInfo) {
-    console.log('Add player width: ' + playerInfo.x + ' height:' + playerInfo.y);
+    var playerName = playerInfo.playerId.substring(0, 3);
+    console.log('Add playername: ' + playerName + ' width: ' + playerInfo.x + ' height:' + playerInfo.y);
+    self.playerText = this.add.text(playerInfo.x, playerInfo.y, 'Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
+
     self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
+
     if (playerInfo.team === 'blue') {
       self.player.setTint(0x7777ff);
     } else {
@@ -125,6 +130,11 @@ class UnicornGame extends Phaser.Scene
       otherPlayer.setTint(0xff7777);
     }
     otherPlayer.playerId = playerInfo.playerId;
+
+    var playerName = playerInfo.playerId.substring(0, 3);
+    console.log('Add other playername: ' + playerName + ' width: ' + playerInfo.x + ' height:' + playerInfo.y);
+    this.add.text(playerInfo.x, playerInfo.y, 'Other Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
+
     self.otherPlayers.add(otherPlayer);
   }
 
@@ -223,9 +233,8 @@ class UnicornGame extends Phaser.Scene
         var key = cursorKeys[name];
         s += `${name}: duration=${key.duration / 1000}\n`;
     }
-    //this.text.setText(s);
     this.joyStickState = localState;
-    console.log('localState = ' + localState);
+    //console.log('localState = ' + localState);
   }
 }
 
