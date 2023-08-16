@@ -27,6 +27,7 @@ io.on('connection', function (socket) {
     x: Math.floor(Math.random() * 700) + 50,
     y: Math.floor(Math.random() * 500) + 50,
     playerId: socket.id,
+    playerName: '',
     team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
   };
   // send the players object to the new player
@@ -44,6 +45,14 @@ io.on('connection', function (socket) {
     delete players[socket.id];
     // emit a message to all players to remove this player
     io.emit('disconnect', socket.id);
+  });
+
+  // when a player is created update the player data
+  socket.on('playerCreated', function (newPlayer) {    
+    players[socket.id].playerName = newPlayer.name;
+    console.log('player was created: ' + socket.id + ' name: ' + players[socket.id].playerName)
+    // emit a message to all players about the player name
+    socket.broadcast.emit('playerCreatedComplete', players[socket.id]);
   });
 
   // when a player moves, update the player data

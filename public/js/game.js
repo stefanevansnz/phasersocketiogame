@@ -12,6 +12,9 @@ class UnicornGame extends Phaser.Scene
 
   otherPlayers;
 
+  inputText;
+  inputName = '';
+
   joyStickState = '';
 
   preload() {
@@ -22,106 +25,155 @@ class UnicornGame extends Phaser.Scene
     var url;
     url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
     this.load.plugin('rexvirtualjoystickplugin', url, true);
+
+    this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
   }
 
   create() {
-    const width = this.scale.gameSize.width;
-    const height = this.scale.gameSize.height;
-
-    this.parent = new Phaser.Structs.Size(width, height);
-    this.sizer = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT, Phaser.Structs.Size.FIT, this.parent);
-
-    this.parent.setSize(width, height);
-    this.sizer.setSize(width, height);
-
-    console.log('size width: ' + width + ' height:' + height);
-
-    this.updateCamera();
-
-    this.scale.on('resize', this.resize, this);
-
-    this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-      x: width / 2,
-      y: height / 2,
-      radius: 100,
-      base: this.add.circle(0, 0, 100, 0x888888),
-      thumb: this.add.circle(0, 0, 50, 0xcccccc),
-      // dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
-      // forceMin: 16,
-      // enable: true
+    console.log('create');
+    this.inputText = this.add.rexInputText(150, 100, 300, 50, {
+        type: 'text',
+        text: '',
+        border: 2,
+        borderColor: '#dddddd',
+        fontSize: '32px',
     })
-    .on('update', this.dumpJoyStickState, this);
+    .on('blur', function (inputText) {
+      console.log('On blur');
+    })
 
-    this.dumpJoyStickState();
+    this.startGameButton = this.add.text(150, 200, 'Start Game', { 
+      fill: '#cccccc',
+      backgroundColor: '#000',
+      fontSize: '32px'
+    });
+    this.startGameButton.setInteractive();
+    this.startGameButton.on('pointerdown', () => this.startGame() );
 
-    // game below
-    var self = this;
-    this.socket = io();
-    this.otherPlayers = this.physics.add.group();
-    this.socket.on('currentPlayers', function (players) {
-      Object.keys(players).forEach(function (id) {
-        if (players[id].playerId === self.socket.id) {
-          self.addPlayer(self, players[id]);
-        } else {
-          self.addOtherPlayers(self, players[id]);
-        }
-      });
-    });
-    this.socket.on('newPlayer', function (playerInfo) {
-      self.addOtherPlayers(self, playerInfo);
-    });
-    this.socket.on('disconnect', function (playerId) {
-      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerId === otherPlayer.playerId) {
-          otherPlayer.destroy();
-          otherPlayer.playerText.destroy(); 
-        }
-      });
-    });
-    this.socket.on('playerMoved', function (playerInfo) {
-      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerInfo.playerId === otherPlayer.playerId) {
-          otherPlayer.setRotation(playerInfo.rotation);
-          otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-          // change player text on move
-          otherPlayer.playerText.x = playerInfo.x - 60;
-          otherPlayer.playerText.y = playerInfo.y - 60;
-        }
-      });
-    });
-    ////
-    this.cursors = this.input.keyboard.createCursorKeys();
+  }
 
-    this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#7777FF' });
-    this.redScoreText = this.add.text(484, 16, '', { fontSize: '32px', fill: '#FF7777' });
+  startGame() {
+    var name = this.inputText.text;
+    console.log('start game with name ' + name);
+    if(name.value != "") {
+        // get value and remove form
+        this.inputName = name;
+
+        this.startGameButton.destroy();
+        this.inputText.destroy();
+
+        const width = this.scale.gameSize.width;
+        const height = this.scale.gameSize.height;
     
-    this.socket.on('scoreUpdate', function (scores) {
-      self.blueScoreText.setText('Blue: ' + scores.blue);
-      self.redScoreText.setText('Red: ' + scores.red);
-    });
-
-    this.socket.on('goalLocation', function (goalLocation) {
-      if (self.goal) self.goal.destroy();
-      self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
-      self.physics.add.overlap(self.player, self.goal, function () {
-        this.socket.emit('goalCollected');
-      }, null, self);
-    });
+        this.parent = new Phaser.Structs.Size(width, height);
+        this.sizer = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT, Phaser.Structs.Size.FIT, this.parent);
+    
+        this.parent.setSize(width, height);
+        this.sizer.setSize(width, height);
+    
+        console.log('size width: ' + width + ' height:' + height);
+    
+        this.updateCamera();
+    
+        this.scale.on('resize', this.resize, this);
+    
+        this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
+          x: width / 2,
+          y: height / 2,
+          radius: 100,
+          base: this.add.circle(0, 0, 100, 0x888888),
+          thumb: this.add.circle(0, 0, 50, 0xcccccc),
+          // dir: '8dir',   // 'up&down'|0|'left&right'|1|'4dir'|2|'8dir'|3
+          // forceMin: 16,
+          // enable: true
+        })
+        .on('update', this.dumpJoyStickState, this);
+    
+        this.dumpJoyStickState();
+    
+        // game below
+        var self = this;
+        this.socket = io();
+        this.otherPlayers = this.physics.add.group();
+        this.socket.on('currentPlayers', function (players) {
+          Object.keys(players).forEach(function (id) {
+            if (players[id].playerId === self.socket.id) {
+              self.addPlayer(self, players[id]);
+            } else {
+              self.addOtherPlayers(self, players[id]);
+            }
+          });
+        });
+        this.socket.on('newPlayer', function (playerInfo) {
+          self.addOtherPlayers(self, playerInfo);
+        });
+        this.socket.on('disconnect', function (playerId) {
+          self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            if (playerId === otherPlayer.playerId) {
+              otherPlayer.destroy();
+              otherPlayer.playerText.destroy(); 
+            }
+          });
+        });
+        this.socket.on('playerMoved', function (playerInfo) {
+          self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            if (playerInfo.playerId === otherPlayer.playerId) {
+              otherPlayer.setRotation(playerInfo.rotation);
+              otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+              // change player text on move
+              otherPlayer.playerText.x = playerInfo.x - 60;
+              otherPlayer.playerText.y = playerInfo.y - 60;
+            }
+          });
+        });
+        this.socket.on('playerCreatedComplete', function (playerInfo) {
+          console.log('playerCreatedComplete for ' + playerInfo.playerName);
+          self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            if (playerInfo.playerId === otherPlayer.playerId) {
+              // update player text field
+              otherPlayer.playerText.text = playerInfo.playerName;
+            }
+          });
+        });
+        ////
+        this.cursors = this.input.keyboard.createCursorKeys();
+    
+        this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#7777FF' });
+        this.redScoreText = this.add.text(484, 16, '', { fontSize: '32px', fill: '#FF7777' });
+        
+        this.socket.on('scoreUpdate', function (scores) {
+          self.blueScoreText.setText('Blue: ' + scores.blue);
+          self.redScoreText.setText('Red: ' + scores.red);
+        });
+    
+        this.socket.on('goalLocation', function (goalLocation) {
+          if (self.goal) self.goal.destroy();
+          self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
+          self.physics.add.overlap(self.player, self.goal, function () {
+            this.socket.emit('goalCollected');
+          }, null, self);
+        });
+    }
   }
 
   addPlayer(self, playerInfo) {
 
     this.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
-    var playerName = playerInfo.playerId.substring(0, 3);
+    var playerName = this.inputName;
+
     console.log('Add playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
-    //self.playerText = this.add.text(playerInfo.x, playerInfo.y, 'Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
-    this.playername = this.add.text(playerInfo.x - 60, playerInfo.y - 60, "Player: " + playerName, {fill: "#ff0044", align: "center", backgroundColor: "#ffff00" }); 
+    this.playername = this.add.text(playerInfo.x - 60, playerInfo.y - 60, playerName, {fill: "#ff0044", align: "center", backgroundColor: "#ffff00" }); 
 
     // if (playerInfo.team === 'blue') {
     //   self.player.setTint(0x7777ff);
     // } else {
     //   self.player.setTint(0xff7777);
     // }
+    self.playerName = playerName;
+    console.log('Add playerCreated id : ' + playerInfo.playerId + ' name : ' + self.playerName );
+    // send details like name etc back when player created
+    this.socket.emit('playerCreated', { id: playerInfo.playerId , name: self.playerName });
+
     self.player.setDrag(100);
     self.player.setAngularDrag(100);
     self.player.setMaxVelocity(200);
@@ -137,12 +189,13 @@ class UnicornGame extends Phaser.Scene
     otherPlayer.setTint(0xAAAAAA);
     otherPlayer.playerId = playerInfo.playerId;
 
-    var playerName = playerInfo.playerId.substring(0, 3);
-    console.log('Add other playername: ' + playerName + ' width: ' + playerInfo.x + ' height:' + playerInfo.y);
+    //var playerName = playerInfo.playerId.substring(0, 3);
+    var playerName = playerInfo.playerName;
+    console.log('Add other playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
     otherPlayer.playerName = playerName;
 
     //this.add.text(playerInfo.x, playerInfo.y, 'Other Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
-    var playerText = this.add.text(playerInfo.x - 60, playerInfo.y - 60, "Other Player: " + playerName, {fill: "#ff0044", align: "center", backgroundColor: "#CCCCCC" }); 
+    var playerText = this.add.text(playerInfo.x - 60, playerInfo.y - 60, playerName, {fill: "#ff0044", align: "center", backgroundColor: "#CCCCCC" }); 
     otherPlayer.playerText = playerText;
 
     self.otherPlayers.add(otherPlayer);
@@ -266,6 +319,9 @@ var config = {
       gravity: { y: 0 }
     }
   },
+  dom: {
+    createContainer: true
+  },
   scene: UnicornGame,
   scale: {
     mode: Phaser.Scale.RESIZE,
@@ -280,7 +336,7 @@ var config = {
         width: 1400,
         height: 1200
     }
-  },   
+  }
 };
 
 var game = new Phaser.Game(config);  
