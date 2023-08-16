@@ -8,7 +8,7 @@ class UnicornGame extends Phaser.Scene
   parent;
   sizer;
   player;
-  playerText;
+  playername;
 
   otherPlayers;
 
@@ -74,6 +74,7 @@ class UnicornGame extends Phaser.Scene
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
+          otherPlayer.playerText.destroy(); 
         }
       });
     });
@@ -82,6 +83,9 @@ class UnicornGame extends Phaser.Scene
         if (playerInfo.playerId === otherPlayer.playerId) {
           otherPlayer.setRotation(playerInfo.rotation);
           otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+          // change player text on move
+          otherPlayer.playerText.x = playerInfo.x - 60;
+          otherPlayer.playerText.y = playerInfo.y - 60;
         }
       });
     });
@@ -106,40 +110,47 @@ class UnicornGame extends Phaser.Scene
   }
 
   addPlayer(self, playerInfo) {
+
+    this.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
     var playerName = playerInfo.playerId.substring(0, 3);
-    console.log('Add playername: ' + playerName + ' width: ' + playerInfo.x + ' height:' + playerInfo.y);
-    self.playerText = this.add.text(playerInfo.x, playerInfo.y, 'Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
+    console.log('Add playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
+    //self.playerText = this.add.text(playerInfo.x, playerInfo.y, 'Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
+    this.playername = this.add.text(playerInfo.x - 60, playerInfo.y - 60, "Player: " + playerName, {fill: "#ff0044", align: "center", backgroundColor: "#ffff00" }); 
 
-    self.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
-
-    if (playerInfo.team === 'blue') {
-      self.player.setTint(0x7777ff);
-    } else {
-      self.player.setTint(0xff7777);
-    }
+    // if (playerInfo.team === 'blue') {
+    //   self.player.setTint(0x7777ff);
+    // } else {
+    //   self.player.setTint(0xff7777);
+    // }
     self.player.setDrag(100);
     self.player.setAngularDrag(100);
     self.player.setMaxVelocity(200);
   }
 
   addOtherPlayers(self, playerInfo) {
-    const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5).setDisplaySize(97, 148);
-    if (playerInfo.team === 'blue') {
-      otherPlayer.setTint(0x7777ff);
-    } else {
-      otherPlayer.setTint(0xff7777);
-    }
+    const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5);
+    // if (playerInfo.team === 'blue') {
+    //   otherPlayer.setTint(0x7777ff);
+    // } else {
+    //   otherPlayer.setTint(0xff7777);
+    // }
+    otherPlayer.setTint(0xAAAAAA);
     otherPlayer.playerId = playerInfo.playerId;
 
     var playerName = playerInfo.playerId.substring(0, 3);
     console.log('Add other playername: ' + playerName + ' width: ' + playerInfo.x + ' height:' + playerInfo.y);
-    this.add.text(playerInfo.x, playerInfo.y, 'Other Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
+    otherPlayer.playerName = playerName;
+
+    //this.add.text(playerInfo.x, playerInfo.y, 'Other Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
+    var playerText = this.add.text(playerInfo.x - 60, playerInfo.y - 60, "Other Player: " + playerName, {fill: "#ff0044", align: "center", backgroundColor: "#CCCCCC" }); 
+    otherPlayer.playerText = playerText;
 
     self.otherPlayers.add(otherPlayer);
   }
 
   update() {
     if (this.player) {
+      // update player
       if (this.cursors.left.isDown || this.joyStickState == 'Key down: left ' || this.joyStickState == 'Key down: up left ' ) {
         this.player.setAngularVelocity(-150);
       } else if (this.cursors.right.isDown || this.joyStickState == 'Key down: right ' || this.joyStickState == 'Key down: up right ') {
@@ -153,8 +164,12 @@ class UnicornGame extends Phaser.Scene
       } else {
         this.player.setAcceleration(0);
       }
+
+      // update player name
+      this.playername.x = this.player.x - 60;
+      this.playername.y = this.player.y - 60;
     
-      this.physics.world.wrap(this.player, 5);
+      this.physics.world.wrap(this.player);
 
       // emit player movement
       var x = this.player.x;
