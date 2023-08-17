@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io').listen(server);
+var Filter = require('bad-words'),
+    filter = new Filter();
 
 var players = {};
 var goal = {
@@ -49,8 +51,10 @@ io.on('connection', function (socket) {
 
   // when a player is created update the player data
   socket.on('playerCreated', function (newPlayer) {    
-    players[socket.id].playerName = newPlayer.name;
-    console.log('player was created: ' + socket.id + ' name: ' + players[socket.id].playerName)
+    console.log('player was created: ' + socket.id + ' and entered name: ' + newPlayer.name)
+    var filteredName = filter.clean( newPlayer.name);
+    players[socket.id].playerName = filteredName;
+    console.log('player name updated to filtered name: ' + filteredName)
     // emit a message to all players about the player name
     socket.broadcast.emit('playerCreatedComplete', players[socket.id]);
   });
