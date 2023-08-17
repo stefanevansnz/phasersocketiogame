@@ -31,22 +31,33 @@ class UnicornGame extends Phaser.Scene
 
   create() {
     console.log('create');
-    this.inputText = this.add.rexInputText(150, 100, 300, 50, {
+    let { width, height } = this.sys.game.canvas;
+
+    this.inputText = this.add.rexInputText(width / 2, height / 3, width - 50, 100, {
         type: 'text',
-        text: '',
-        border: 2,
-        borderColor: '#dddddd',
-        fontSize: '32px',
+        border: 4,
+        color: '#000000',
+        borderColor: '#1b5e20',
+        fontSize: '70px',
+        backgroundColor: '#ffffff',
+        maxLength: 10,
+        minLength: 0,    
+        placeholder: 'Press to enter name',
+        autoComplete: 'off',
+        align: 'center'
     })
     .on('blur', function (inputText) {
       console.log('On blur');
     })
 
-    this.startGameButton = this.add.text(150, 200, 'Start Game', { 
+    this.inputText.setFocus();
+
+    this.startGameButton = this.add.text(width / 2, (height / 3) + 200, 'Join game', { 
       fill: '#cccccc',
-      backgroundColor: '#000',
-      fontSize: '32px'
-    });
+      fontSize: '80px',
+      color: '#000000',
+      backgroundColor: '#1b5e20',
+    }).setOrigin(0.5,0.5);
     this.startGameButton.setInteractive();
     this.startGameButton.on('pointerdown', () => this.startGame() );
 
