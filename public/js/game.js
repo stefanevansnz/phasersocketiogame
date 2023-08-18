@@ -34,7 +34,9 @@ class UnicornGame extends Phaser.Scene
   create() {
     console.log('create');
 
-    let { width, height } = this.sys.game.canvas;
+    var { width, height } = this.sys.game.canvas;
+    this.GAME_WIDTH = width;
+    this.GAME_HEIGHT = height;
 
     this.welcomeText = this.add.text(width / 2, 100, 
       'Beta Game (v' + this.version + ')', { 
@@ -82,12 +84,6 @@ class UnicornGame extends Phaser.Scene
         this.startGameButton.destroy();
         this.inputText.destroy();
         this.welcomeText.destroy();
-
-        this.GAME_WIDTH = this.scale.gameSize.width;
-        this.GAME_HEIGHT = this.scale.gameSize.height;
-
-        this.width = this.GAME_WIDTH;
-        this.height = this.GAME_HEIGHT;
     
         this.parent = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT );
         this.sizer = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT, Phaser.Structs.Size.FIT, this.parent);
@@ -95,7 +91,7 @@ class UnicornGame extends Phaser.Scene
         this.parent.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
         this.sizer.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
     
-        console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHTt);
+        console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHT);
     
         this.updateCamera();
     
@@ -351,7 +347,6 @@ var config = {
   scene: UnicornGame,
   scale: {
     mode: Phaser.Scale.RESIZE,
-    parent: 'phaser-example',
     width: 640,
     height: 960,
     min: {
