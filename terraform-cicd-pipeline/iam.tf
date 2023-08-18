@@ -62,7 +62,8 @@ resource "aws_iam_role_policy" "codepipeline_role_policy" {
         "codecommit:GetUploadArchiveStatus",
         "codecommit:UploadArchive",
         "codebuild:BatchGetBuilds",
-        "codebuild:StartBuild"
+        "codebuild:StartBuild",
+        "sts:AssumeRole"
       ],
       "Resource": "*"
     },
