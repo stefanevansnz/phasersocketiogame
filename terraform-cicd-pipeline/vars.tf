@@ -20,7 +20,7 @@ variable "build_artifact_bucket_name" {
 
 # define docker image for build stage
 variable "build_image" {
-  default = "aws/codebuild/docker:18.09.0"
+  default = "aws/codebuild/standard:4.0"
 }
 
 # define build spec for build stage
