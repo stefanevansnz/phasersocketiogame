@@ -4,6 +4,8 @@ class UnicornGame extends Phaser.Scene
   GAME_WIDTH;
   GAME_HEIGHT;
 
+  version = '0.2';
+
   backgroundScene;
   parent;
   sizer;
@@ -35,7 +37,7 @@ class UnicornGame extends Phaser.Scene
     let { width, height } = this.sys.game.canvas;
 
     this.welcomeText = this.add.text(width / 2, 100, 
-      'Beta Game (version 0.1)', { 
+      'Beta Game (v' + this.version + ')', { 
       fontSize: '60px',
       color: '#000000',
     }).setOrigin(0.5,0.5);
@@ -226,9 +228,9 @@ class UnicornGame extends Phaser.Scene
   update() {
     if (this.player) {
       // update player
-      if (this.cursors.left.isDown || this.joyStickState == 'Key down: left ' || this.joyStickState == 'Key down: up left ' ) {
+      if (this.cursors.left.isDown || this.joyStickState == 'Key down: left ' || this.joyStickState == 'Key down: up left ' || this.joyStickState == 'Key down: down left ') {
         this.player.setAngularVelocity(-150);
-      } else if (this.cursors.right.isDown || this.joyStickState == 'Key down: right ' || this.joyStickState == 'Key down: up right ') {
+      } else if (this.cursors.right.isDown || this.joyStickState == 'Key down: right ' || this.joyStickState == 'Key down: up right ' || this.joyStickState == 'Key down: down right ') {
         this.player.setAngularVelocity(150);
       } else {
         this.player.setAngularVelocity(0);
@@ -236,6 +238,8 @@ class UnicornGame extends Phaser.Scene
     
       if (this.cursors.up.isDown || this.joyStickState == 'Key down: up ' || this.joyStickState == 'Key down: up left ' || this.joyStickState == 'Key down: up right ') {
         this.physics.velocityFromRotation(this.player.rotation + 1.5, 100, this.player.body.acceleration);
+      } else if (this.cursors.up.isDown || this.joyStickState == 'Key down: down ' || this.joyStickState == 'Key down: down left ' || this.joyStickState == 'Key down: down right ') {
+          this.physics.velocityFromRotation(this.player.rotation - 1.5, 0, this.player.body.acceleration);        
       } else {
         this.player.setAcceleration(0);
       }
