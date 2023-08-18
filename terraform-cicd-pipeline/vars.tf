@@ -5,12 +5,17 @@ variable "region" {
 
 # CodeCommit and ECR repo name, also as artifact bucket prefix
 variable "repo_name" {
-  default = "tf-eks"
+  default = "stefanevansnz/phasersocketiogame"
 }
 
 # define default git branch
 variable "default_branch" {
   default = "master"
+}
+
+
+variable "build_artifact_bucket_name" {
+  default = "tf-eks-build-bucket-phasersocketiogame"
 }
 
 # define docker image for build stage
@@ -23,12 +28,12 @@ variable "build_spec" {
   default = "buildspec/build.yml"
 }
 
-# define docker image for deploy stage
-variable "deploy_image" {
-  default = "ybv/ide"
-}
-
 # define build spec for deploy stage
 variable "deploy_spec" {
   default = "buildspec/deploy.yml"
+}
+
+variable "environment_variables" {
+  description = "Environment variables"
+  type = map(string)
 }

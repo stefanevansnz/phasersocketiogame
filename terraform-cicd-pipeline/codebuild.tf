@@ -13,6 +13,14 @@ resource "aws_codebuild_project" "tf-eks-build" {
     image           = "${var.build_image}"
     type            = "LINUX_CONTAINER"
     privileged_mode = true
+
+    dynamic "environment_variable" {
+      for_each = var.environment_variables
+      content {
+        name  = environment_variable.key
+        value = environment_variable.value
+      }
+    }
   }
 
   source {

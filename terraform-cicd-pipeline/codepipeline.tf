@@ -1,3 +1,8 @@
+resource "aws_codestarconnections_connection" "tf-github-connector" {
+  name          = "github-connection"
+  provider_type = "GitHub"
+}
+
 # create a pipeline
 resource "aws_codepipeline" "tf-eks-pipeline" {
   name     = "tf-eks-pipeline"
@@ -19,15 +24,15 @@ resource "aws_codepipeline" "tf-eks-pipeline" {
     action {
       name             = "Source"
       category         = "Source"
-      owner            = "ThirdParty"
-      provider         = "GitHub"
+      owner            = "AWS"
+      provider         = "CodeStarSourceConnection"
       version          = "1"
       output_artifacts = ["source"]
 
       configuration = {
-        RepositoryName = "${var.repo_name}"
-        BranchName = "${var.default_branch}"
-        OAuthToken = "<secret-github-token>"
+        ConnectionArn    = aws_codestarconnections_connection.tf-github-connector.arn
+        FullRepositoryId = "${var.repo_name}"
+        BranchName       = "${var.default_branch}"
       }
     }
   }

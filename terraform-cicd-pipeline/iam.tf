@@ -86,6 +86,29 @@ resource "aws_iam_role_policy" "codepipeline_role_policy" {
         ],
         "Resource": "${aws_kms_key.artifact_encryption_key.arn}",
         "Effect": "Allow"
+    },
+    {
+      "Action": [
+          "codestar-connections:UseConnection"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+          "appconfig:StartDeployment",
+          "appconfig:GetDeployment",
+          "appconfig:StopDeployment"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
+    },
+    {
+      "Action": [
+          "codecommit:GetRepository"
+      ],
+      "Resource": "*",
+      "Effect": "Allow"
     }
   ]
 }

@@ -9,6 +9,6 @@ terraform/terraform.tfstate.backup
 terraform/.terraform.tfstate.lock.info
 terraform-cicd-pipeline/.terraform
 terraform-cicd-pipeline/.terraform.lock.hcl
-terraform-cicd-pipeline/terraform.tfstater
+terraform-cicd-pipeline/terraform.tfstate
 terraform-cicd-pipeline/terraform.tfstate.backup
 terraform-cicd-pipeline/.terraform.tfstate.lock.info
