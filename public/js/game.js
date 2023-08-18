@@ -31,7 +31,14 @@ class UnicornGame extends Phaser.Scene
 
   create() {
     console.log('create');
+
     let { width, height } = this.sys.game.canvas;
+
+    this.welcomeText = this.add.text(width / 2, 100, 
+      'Beta Game (version 0.1)', { 
+      fontSize: '60px',
+      color: '#000000',
+    }).setOrigin(0.5,0.5);
 
     this.inputText = this.add.rexInputText(width / 2, height / 3, width - 50, 100, {
         type: 'text',
@@ -72,9 +79,13 @@ class UnicornGame extends Phaser.Scene
 
         this.startGameButton.destroy();
         this.inputText.destroy();
+        this.welcomeText.destroy();
 
-        this.GAME_WIDTH= this.scale.gameSize.width;
+        this.GAME_WIDTH = this.scale.gameSize.width;
         this.GAME_HEIGHT = this.scale.gameSize.height;
+
+        this.width = this.GAME_WIDTH;
+        this.height = this.GAME_HEIGHT;
     
         this.parent = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT );
         this.sizer = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT, Phaser.Structs.Size.FIT, this.parent);
