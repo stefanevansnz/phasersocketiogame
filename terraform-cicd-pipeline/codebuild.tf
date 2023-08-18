@@ -30,37 +30,34 @@ resource "aws_codebuild_project" "tf-eks-build" {
 
 }
 
+# Deploy to EKS
+resource "aws_codebuild_project" "tf-eks-deploy" {
+  name          = "ttf-eks-deploy"
+  description   = "Terraform EKS deploy"
+  service_role  = "${aws_iam_role.codepipeline_role.arn}"
 
-# staging deploy
-# resource "aws_codebuild_project" "tf-eks-deploy-staging" {
-#   name          = "tf-eks-deploy"
-#   description   = "Terraform EKS Deploy"
-#   service_role  = "${aws_iam_role.tf-eks-pipeline.arn}"
+  artifacts {
+    type = "CODEPIPELINE"
+  }
 
-#   artifacts {
-#     type = "CODEPIPELINE"
-#   }
+  environment {
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    image           = "${var.build_image}"
+    type            = "LINUX_CONTAINER"
+    privileged_mode = true
 
-#   environment {
-#     compute_type    = "BUILD_GENERAL1_SMALL"
-#     image           = "${var.deploy_image}"
-#     type            = "LINUX_CONTAINER"
-#     privileged_mode = false
+    dynamic "environment_variable" {
+      for_each = var.environment_variables
+      content {
+        name  = environment_variable.key
+        value = environment_variable.value
+      }
+    }
+  }
 
-#     environment_variable {
-#       name  = "EKS_NAMESPACE"
-#       value = "tf-eks-deploy"
-#     }
-    
-#     environment_variable {
-#       name  = "ECR_REPO"
-#       value = "${aws_ecr_repository.tf-eks-ecr.repository_url}"
-#     }
-#   }
+  source {
+    type            = "CODEPIPELINE"
+    buildspec       = "${var.build_deploy_spec}"
+  }
 
-#   source {
-#     type            = "CODEPIPELINE"
-#     buildspec       = "${var.deploy_spec}"
-#   }
-
-# }
+}

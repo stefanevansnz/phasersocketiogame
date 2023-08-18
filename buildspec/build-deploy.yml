@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+  build:
+    commands:
+      - echo Deployment started on `date`
+      - echo Update kubeconfig
+      - cd terraform
+      - aws eks update-kubeconfig --name gamecluster --region ap-southeast-2
+      - cd ../kubernetes
+      - kubectl create secret docker-registry regcred --docker-server=915922766016.dkr.ecr.ap-southeast-2.amazonaws.com docker-username=AWS docker-password=$(aws ecr get-login-password) --namespace=games
+      - kubectl config set-context --current --namespace=games
+      - kubectl get pods
+      - kubectl apply -f deployment.yaml
+      - kubectl get pods
+      - echo Deployment completed on `date`
+  post_build:
+    commands:
+      - echo Post Deployment completed on `date`

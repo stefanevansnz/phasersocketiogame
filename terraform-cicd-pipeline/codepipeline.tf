@@ -54,21 +54,21 @@ resource "aws_codepipeline" "tf-eks-pipeline" {
     }
   }
 
-#   stage {
-#     name = "Deploy"
+ stage {
+    name = "Deploy"
 
-#     action {
-#       name             = "Deploy"
-#       category         = "Build"
-#       owner            = "AWS"
-#       provider         = "CodeBuild"
-#       input_artifacts  = ["source"]
-#       version          = "1"
+    action {
+      name             = "Deploy"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["source"]
+      version          = "1"
 
-#       configuration {
-#         ProjectName = "${aws_codebuild_project.tf-eks-deploy.name}"
-#       }
-#     }
-#   }
-
+      configuration = {
+        ProjectName = "${aws_codebuild_project.tf-eks-deploy.name}"
+      }
+    }
+  }
+  
 }

@@ -29,8 +29,8 @@ variable "build_spec" {
 }
 
 # define build spec for deploy stage
-variable "deploy_spec" {
-  default = "buildspec/deploy.yml"
+variable "build_deploy_spec" {
+  default = "buildspec/build-deploy.yml"
 }
 
 variable "environment_variables" {
