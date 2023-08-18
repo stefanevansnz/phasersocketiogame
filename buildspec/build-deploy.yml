@@ -13,11 +13,7 @@ phases:
       - cd terraform
       - aws eks update-kubeconfig --name gamecluster --region ap-southeast-2
       - cd ../kubernetes
-      - kubectl create secret docker-registry regcred \
-      - --docker-server=915922766016.dkr.ecr.ap-southeast-2.amazonaws.com \
-      - --docker-username=AWS \
-      - --docker-password=$(aws ecr get-login-password) \
-      - --namespace=games    
+      - kubectl create secret docker-registry regcred --docker-server=915922766016.dkr.ecr.ap-southeast-2.amazonaws.com --docker-username=AWS --docker-password=$(aws ecr get-login-password) --namespace=games
       - kubectl config set-context --current --namespace=games
       - kubectl get pods
       - kubectl apply -f deployment.yaml
