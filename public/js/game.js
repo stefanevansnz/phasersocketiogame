@@ -1,8 +1,8 @@
 
 class UnicornGame extends Phaser.Scene
 {
-  GAME_WIDTH = 640;
-  GAME_HEIGHT = 1190;
+  GAME_WIDTH;
+  GAME_HEIGHT;
 
   backgroundScene;
   parent;
@@ -73,24 +73,24 @@ class UnicornGame extends Phaser.Scene
         this.startGameButton.destroy();
         this.inputText.destroy();
 
-        const width = this.scale.gameSize.width;
-        const height = this.scale.gameSize.height;
+        this.GAME_WIDTH= this.scale.gameSize.width;
+        this.GAME_HEIGHT = this.scale.gameSize.height;
     
-        this.parent = new Phaser.Structs.Size(width, height);
+        this.parent = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT );
         this.sizer = new Phaser.Structs.Size(this.GAME_WIDTH, this.GAME_HEIGHT, Phaser.Structs.Size.FIT, this.parent);
     
-        this.parent.setSize(width, height);
-        this.sizer.setSize(width, height);
+        this.parent.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
+        this.sizer.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
     
-        console.log('size width: ' + width + ' height:' + height);
+        console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHTt);
     
         this.updateCamera();
     
         this.scale.on('resize', this.resize, this);
     
         this.joyStick = this.plugins.get('rexvirtualjoystickplugin').add(this, {
-          x: width / 2,
-          y: height / 2,
+          x: this.GAME_WIDTH / 2,
+          y: this.GAME_HEIGHT / 2,
           radius: 100,
           base: this.add.circle(0, 0, 100, 0x888888),
           thumb: this.add.circle(0, 0, 50, 0xcccccc),
@@ -233,7 +233,7 @@ class UnicornGame extends Phaser.Scene
       this.playername.x = this.player.x - 60;
       this.playername.y = this.player.y - 60;
     
-      this.physics.world.wrap(this.player);
+      this.physics.world.wrap(this.player, 40);
 
       // emit player movement
       var x = this.player.x;
