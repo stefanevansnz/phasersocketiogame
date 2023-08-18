@@ -7,7 +7,7 @@ phases:
   build:
     commands:
       - echo Deployment started on `date`
-      - echo Update kubeconfig
+      - echo Log into EKS
       - CREDENTIALS=$(aws sts assume-role --role-arn arn:aws:iam::915922766016:role/AmazonEKSNodeRole --role-session-name codebuild-kubectl --duration-seconds 900)
       - export AWS_ACCESS_KEY_ID="$(echo ${CREDENTIALS} | jq -r '.Credentials.AccessKeyId')"
       - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
@@ -15,6 +15,7 @@ phases:
       - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
       - echo "Credentials Value is..  ${CREDENTIALS}"      
       - echo "AWS_ACCESS_KEY_ID...  ${AWS_ACCESS_KEY_ID}" 
+      - echo Update KubeConfig      
       - aws eks update-kubeconfig --name gamecluster --region ap-southeast-2
       - kubectl config set-context --current --namespace=games      
       - kubectl get pods
