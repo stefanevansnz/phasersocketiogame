@@ -115,3 +115,48 @@ resource "aws_iam_role_policy" "codepipeline_role_policy" {
 }
 POLICY
 }
+
+
+
+resource "aws_iam_role" "ekscodebuild_role" {
+  name = "EksCodeBuildKubectl_role"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::915922766016:root"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF
+}
+
+
+
+
+# iam policy for codepipeline role
+resource "aws_iam_role_policy" "ekscodebuild_policy" {
+  role = "${aws_iam_role.ekscodebuild_role.name}"
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "eks:*",
+        "ecr:*"
+      ], 
+      "Resource": "*"
+    }
+  ]
+}
+POLICY
+}
