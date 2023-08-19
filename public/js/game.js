@@ -168,7 +168,13 @@ class UnicornGame extends Phaser.Scene
     
         this.socket.on('goalLocation', function (goalLocation) {
           if (self.goal) self.goal.destroy();
+
+          goalLocation.x = goalLocation.x  * self.GAME_WIDTH;
+          goalLocation.y = goalLocation.y  * self.GAME_HEIGHT;
+          console.log('goalLocation.x ' + goalLocation.x + ' goalLocation.y ' + goalLocation.y);
+
           self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
+
           self.physics.add.overlap(self.player, self.goal, function () {
             this.socket.emit('goalCollected');
           }, null, self);

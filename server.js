@@ -7,8 +7,8 @@ var Filter = require('bad-words'),
 
 var players = {};
 var goal = {
-  x: Math.floor(Math.random() * 700) + 50,
-  y: Math.floor(Math.random() * 500) + 50
+  x: Math.random(),
+  y: Math.random()
 };
 var scores = {
   blue: 0,
@@ -35,6 +35,7 @@ io.on('connection', function (socket) {
   // send the players object to the new player
   socket.emit('currentPlayers', players);
   // send the goal object to the new player
+  console.log('goal create at x: ' + goal.x + ' y: ' + goal.y)
   socket.emit('goalLocation', goal);
   // send the current scores
   socket.emit('scoreUpdate', scores);
@@ -75,8 +76,9 @@ io.on('connection', function (socket) {
     } else {
       scores.blue += 10;
     }
-    goal.x = Math.floor(Math.random() * 700) + 50;
-    goal.y = Math.floor(Math.random() * 500) + 50;
+    goal.x = Math.random();
+    goal.y = Math.random();
+    console.log('goal updated to: x: ' + goal.x + ' y: ' + goal.y)
     io.emit('goalLocation', goal);
     io.emit('scoreUpdate', scores);
   });
