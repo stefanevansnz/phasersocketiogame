@@ -184,7 +184,13 @@ class UnicornGame extends Phaser.Scene
 
   addPlayer(self, playerInfo) {
 
-    this.player = self.physics.add.image(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
+    // start near the middle
+    playerInfo.x = (playerInfo.x * self.GAME_WIDTH / 2) + self.GAME_WIDTH / 4;
+    playerInfo.y = (playerInfo.y * self.GAME_HEIGHT / 4) + self.GAME_HEIGHT / 4;
+
+    this.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
+    this.player.rotation = 90;
+
     var playerName = this.inputName;
 
     console.log('Add playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
