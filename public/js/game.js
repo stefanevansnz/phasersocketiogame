@@ -10,6 +10,7 @@ class UnicornGame extends Phaser.Scene
   parent;
   sizer;
   player;
+  playerId;
   playername;
 
   otherPlayers;
@@ -155,17 +156,26 @@ class UnicornGame extends Phaser.Scene
             }
           });
         });
+        this.socket.on('playerScored', function (playerInfo) {
+          console.log('playerScored ' + playerInfo.playerName + ' score now ' + playerInfo.score);
+          console.log('current player is ' + self.playerId)
+          // if current player scored then update
+          if (playerInfo.playerId === self.playerId) {
+            console.log('your player scored ' + playerInfo.playerName);
+            self.playername.text = playerInfo.playerName + ' ' + playerInfo.score;
+          }
+          // otherwise update other player
+          self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            if (playerInfo.playerId === otherPlayer.playerId) {
+              console.log('other player scored ' + playerInfo.playerName);
+              // update other player text field
+              otherPlayer.playerText.text = playerInfo.playerName + ' ' + playerInfo.score;
+            }
+          });
+        });
         ////
         this.cursors = this.input.keyboard.createCursorKeys();
-    
-        this.blueScoreText = this.add.text(16, 16, '', { fontSize: '32px', fill: '#7777FF' });
-        this.redScoreText = this.add.text(484, 16, '', { fontSize: '32px', fill: '#FF7777' });
         
-        this.socket.on('scoreUpdate', function (scores) {
-          self.blueScoreText.setText('Blue: ' + scores.blue);
-          self.redScoreText.setText('Red: ' + scores.red);
-        });
-    
         this.socket.on('goalLocation', function (goalLocation) {
           if (self.goal) self.goal.destroy();
 
@@ -196,11 +206,7 @@ class UnicornGame extends Phaser.Scene
     console.log('Add playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
     this.playername = this.add.text(playerInfo.x - 60, playerInfo.y - 60, playerName, {fill: "#ff0044", align: "center", backgroundColor: "#ffff00" }); 
 
-    // if (playerInfo.team === 'blue') {
-    //   self.player.setTint(0x7777ff);
-    // } else {
-    //   self.player.setTint(0xff7777);
-    // }
+    self.playerId = playerInfo.playerId;
     self.playerName = playerName;
     console.log('Add playerCreated id : ' + playerInfo.playerId + ' name : ' + self.playerName );
     // send details like name etc back when player created
@@ -212,23 +218,25 @@ class UnicornGame extends Phaser.Scene
   }
 
   addOtherPlayers(self, playerInfo) {
+
+    // adjust other player coorids
+    playerInfo.x = (playerInfo.x * self.GAME_WIDTH);
+    playerInfo.y = (playerInfo.y * self.GAME_HEIGHT);
+
     const otherPlayer = self.add.sprite(playerInfo.x, playerInfo.y, 'otherPlayer').setOrigin(0.5, 0.5);
-    // if (playerInfo.team === 'blue') {
-    //   otherPlayer.setTint(0x7777ff);
-    // } else {
-    //   otherPlayer.setTint(0xff7777);
-    // }
     otherPlayer.setTint(0xAAAAAA);
     otherPlayer.playerId = playerInfo.playerId;
 
-    //var playerName = playerInfo.playerId.substring(0, 3);
     var playerName = playerInfo.playerName;
-    console.log('Add other playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
+    var playerScore = playerInfo.score;
+    console.log('Add other playername: ' + playerName +  ' score: ' + playerScore + ' x: ' + playerInfo.x + ' y:' + playerInfo.y) ;
     otherPlayer.playerName = playerName;
+    otherPlayer.score = playerScore;
 
     //this.add.text(playerInfo.x, playerInfo.y, 'Other Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
     var playerText = this.add.text(playerInfo.x - 60, playerInfo.y - 60, playerName, {fill: "#ff0044", align: "center", backgroundColor: "#CCCCCC" }); 
     otherPlayer.playerText = playerText;
+
 
     self.otherPlayers.add(otherPlayer);
   }

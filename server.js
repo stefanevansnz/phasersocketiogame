@@ -7,8 +7,8 @@ var Filter = require('bad-words'),
 
 var players = {};
 var goal = {
-  x: Math.random(),
-  y: Math.random()
+  x: 0.25,
+  y: 0.25
 };
 var scores = {
   blue: 0,
@@ -30,7 +30,7 @@ io.on('connection', function (socket) {
     y: 0.5,
     playerId: socket.id,
     playerName: '',
-    team: (Math.floor(Math.random() * 2) == 0) ? 'red' : 'blue'
+    score: 0
   };
   // send the players object to the new player
   socket.emit('currentPlayers', players);
@@ -71,16 +71,13 @@ io.on('connection', function (socket) {
   });
 
   socket.on('goalCollected', function () {
-    if (players[socket.id].team === 'red') {
-      scores.red += 10;
-    } else {
-      scores.blue += 10;
-    }
+    players[socket.id].score += 1;
     goal.x = Math.random();
     goal.y = Math.random();
-    console.log('goal updated to: x: ' + goal.x + ' y: ' + goal.y)
+    console.log('goal updated to: x: ' + goal.x + ' y: ' + goal.y);
     io.emit('goalLocation', goal);
-    io.emit('scoreUpdate', scores);
+    console.log('playerScored name: ' + players[socket.id].playerName + ' score: ' +players[socket.id].score);    
+    io.emit('playerScored', players[socket.id]);
   });
 });
 
