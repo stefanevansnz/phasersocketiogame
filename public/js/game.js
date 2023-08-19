@@ -35,17 +35,17 @@ class UnicornGame extends Phaser.Scene
   create() {
     console.log('create');
 
-    var { width, height } = this.sys.game.canvas;
-    this.GAME_WIDTH = width;
-    this.GAME_HEIGHT = height;
+    //var { width, height } = this.sys.game.canvas;
+    this.GAME_WIDTH = this.scale.width;
+    this.GAME_HEIGHT = this.scale.height;
 
-    this.welcomeText = this.add.text(width / 2, 100, 
+    this.welcomeText = this.add.text(this.GAME_WIDTH / 2, 100, 
       'Beta Game (v' + this.version + ')', { 
       fontSize: '60px',
       color: '#000000',
     }).setOrigin(0.5,0.5);
 
-    this.inputText = this.add.rexInputText(width / 2, height / 3, width - 50, 100, {
+    this.inputText = this.add.rexInputText(this.GAME_WIDTH / 2, this.GAME_HEIGHT / 3, this.GAME_WIDTH - 50, 100, {
         type: 'text',
         border: 4,
         color: '#000000',
@@ -64,7 +64,7 @@ class UnicornGame extends Phaser.Scene
 
     this.inputText.setFocus();
 
-    this.startGameButton = this.add.text(width / 2, (height / 3) + 200, 'Join game', { 
+    this.startGameButton = this.add.text(this.GAME_WIDTH / 2, (this.GAME_HEIGHT / 3) + 200, 'Join game', { 
       fill: '#cccccc',
       fontSize: '80px',
       color: '#000000',
@@ -92,9 +92,9 @@ class UnicornGame extends Phaser.Scene
         this.parent.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
         this.sizer.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
     
-        console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHT);
+        //console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHT);
     
-        this.updateCamera();
+        //this.updateCamera();
     
         this.scale.on('resize', this.resize, this);
     
@@ -290,16 +290,18 @@ class UnicornGame extends Phaser.Scene
   //  ------------------------
   //  ------------------------
 
-  resize (gameSize)
+  resize (gameSize, baseSize, displaySize, resolution)
   {
       const width = gameSize.width;
       const height = gameSize.height;
+
+      this.cameras.resize(width, height);
       console.log('size width: ' + width + ' height:' + height);
       
-      this.parent.setSize(width, height);
-      this.sizer.setSize(width, height);
+      //this.parent.setSize(width, height);
+      //this.sizer.setSize(width, height);
 
-      this.updateCamera();
+      //this.updateCamera();
   }
 
   updateCamera ()
@@ -352,8 +354,6 @@ var config = {
   type: Phaser.AUTO,
   backgroundColor: '#69c4df',  
   parent: 'phaser-game',
-  width: 640,
-  height: 960,
   physics: {
     default: 'arcade',
     arcade: {
@@ -367,16 +367,9 @@ var config = {
   scene: UnicornGame,
   scale: {
     mode: Phaser.Scale.RESIZE,
-    width: 640,
-    height: 960,
-    min: {
-        width: 320,
-        height: 480
-    },
-    max: {
-        width: 1400,
-        height: 1200
-    }
+    parent: 'phaser-example',
+    width: '100%',
+    height: '100%'
   }
 };
 
