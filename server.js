@@ -10,11 +10,6 @@ var goal = {
   x: 0.25,
   y: 0.25
 };
-var scores = {
-  blue: 0,
-  red: 0
-};
-
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res) {
@@ -37,8 +32,6 @@ io.on('connection', function (socket) {
   // send the goal object to the new player
   console.log('goal create at x: ' + goal.x + ' y: ' + goal.y)
   socket.emit('goalLocation', goal);
-  // send the current scores
-  socket.emit('scoreUpdate', scores);
   // update all other players of the new player
   socket.broadcast.emit('newPlayer', players[socket.id]);
 

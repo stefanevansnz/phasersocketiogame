@@ -152,14 +152,8 @@ class UnicornGame extends Phaser.Scene
           self.otherPlayers.getChildren().forEach(function (otherPlayer) {
             if (playerInfo.playerId === otherPlayer.playerId) {
               // update player text field
-              var otherPlayerScore = '(no rainbows)';
-              if (otherPlayer.score === 1) {
-                otherPlayerScore + '(has 1 rainbow)';
-              } else if (otherPlayer.score > 1) {
-                otherPlayerScore = '(has ' + playerInfo.score + ' rainbows)';  
-              }
-              otherPlayer.playerText.text = playerInfo.playerName + '\n ' + otherPlayerScore;                
-
+              var playerScoreText = self.playerScoreText(self, playerInfo.score);
+              otherPlayer.playerText.text = playerInfo.playerName + '\n ' + playerScoreText;                
             }
           });
         });
@@ -168,15 +162,18 @@ class UnicornGame extends Phaser.Scene
           console.log('current player is ' + self.playerId)
           // if current player scored then update
           if (playerInfo.playerId === self.playerId) {
-            console.log('your player scored ' + playerInfo.playerName);
-            self.playername.text = playerInfo.playerName + '\n (has ' + playerInfo.score + ' rainbows)';
+            console.log('your player scored ' + playerInfo.playerName + ' score ' + playerInfo.score);
+            var playerScoreText = self.playerScoreText(self, playerInfo.score);
+            self.playername.text = playerInfo.playerName + '\n' + playerScoreText;
           }
           // otherwise update other player
           self.otherPlayers.getChildren().forEach(function (otherPlayer) {
+            console.log('other player ' + otherPlayer.playerName)
             if (playerInfo.playerId === otherPlayer.playerId) {
-              console.log('other player scored ' + playerInfo.playerName);
+              console.log('other player scored ' + playerInfo.playerName + ' score ' + playerInfo.score);
+              var playerScoreText = self.playerScoreText(self, playerInfo.score);
               // update other player text field
-              otherPlayer.playerText.text = playerInfo.playerName + '\n (has ' + playerInfo.score + ' rainbows)';
+              otherPlayer.playerText.text = playerInfo.playerName + '\n' + playerScoreText;
             }
           });
         });
@@ -193,10 +190,23 @@ class UnicornGame extends Phaser.Scene
           self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
 
           self.physics.add.overlap(self.player, self.goal, function () {
+            if (self.goal) self.goal.destroy();
             this.socket.emit('goalCollected');
           }, null, self);
         });
     }
+  }
+
+  playerScoreText(self, score) { 
+    console.log('score: ' + score);   
+    var scoreText = '(no rainbows)';
+    if (score === 1) {
+      scoreText = '(has 1 rainbow)';
+    } else if (score > 1) {
+      scoreText = '(has ' + score + ' rainbows)';  
+    }
+    console.log('scoreText: ' + scoreText);
+    return scoreText;
   }
 
   addPlayer(self, playerInfo) {
@@ -240,13 +250,9 @@ class UnicornGame extends Phaser.Scene
     otherPlayer.playerName = playerName;
     otherPlayer.score = playerScore;
 
-    var otherPlayerScore = '(no rainbows)';
-    if (otherPlayer.score === 1) {
-      otherPlayerScore + '(has 1 rainbow)';
-    } else if (otherPlayer.score > 1) {
-      otherPlayerScore = '(has ' + playerInfo.score + ' rainbows)';  
-    }
-    var playerText = this.add.text(playerInfo.x - 180, playerInfo.y - 180, playerName + ' \n ' + otherPlayerScore, {fontSize: '40px', fill: "#666666", align: "center" }); 
+    var playerScoreText = self.playerScoreText(self, otherPlayer.score);
+    // update other player text field    
+    var playerText = this.add.text(playerInfo.x - 180, playerInfo.y - 180, playerName + ' \n ' + playerScoreText, {fontSize: '40px', fill: "#666666", align: "center" }); 
     otherPlayer.playerText = playerText;
 
     self.otherPlayers.add(otherPlayer);
