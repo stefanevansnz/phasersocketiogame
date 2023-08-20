@@ -41,7 +41,7 @@ class UnicornGame extends Phaser.Scene
 
     this.welcomeText = this.add.text(this.GAME_WIDTH / 2, 100, 
       'Beta Game (v' + this.version + ')', { 
-      fontSize: '60px',
+      fontSize: '40px',
       color: '#000000',
     }).setOrigin(0.5,0.5);
 
@@ -64,12 +64,12 @@ class UnicornGame extends Phaser.Scene
 
     this.inputText.setFocus();
 
-    this.startGameButton = this.add.text(this.GAME_WIDTH / 2, (this.GAME_HEIGHT / 3) + 200, 'Join game', { 
+    this.startGameButton = this.add.text(this.GAME_WIDTH / 2, (this.GAME_HEIGHT / 3) + 200, 'Join Game', { 
       fill: '#cccccc',
       fontSize: '80px',
       color: '#000000',
       backgroundColor: '#1b5e20',
-    }).setOrigin(0.5,0.5);
+    }).setOrigin(0.5,0.5).setPadding(64, 16);
     this.startGameButton.setInteractive();
     this.startGameButton.on('pointerdown', () => this.startGame() );
 
