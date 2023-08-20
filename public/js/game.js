@@ -142,8 +142,8 @@ class UnicornGame extends Phaser.Scene
               otherPlayer.setRotation(playerInfo.rotation);
               otherPlayer.setPosition(playerInfo.x, playerInfo.y);
               // change player text on move
-              otherPlayer.playerText.x = playerInfo.x - 60;
-              otherPlayer.playerText.y = playerInfo.y - 60;
+              otherPlayer.playerText.x = playerInfo.x - 220;
+              otherPlayer.playerText.y = playerInfo.y - 180;
             }
           });
         });
@@ -152,7 +152,14 @@ class UnicornGame extends Phaser.Scene
           self.otherPlayers.getChildren().forEach(function (otherPlayer) {
             if (playerInfo.playerId === otherPlayer.playerId) {
               // update player text field
-              otherPlayer.playerText.text = playerInfo.playerName;
+              var otherPlayerScore = '(no rainbows)';
+              if (otherPlayer.score === 1) {
+                otherPlayerScore + '(has 1 rainbow)';
+              } else if (otherPlayer.score > 1) {
+                otherPlayerScore = '(has ' + playerInfo.score + ' rainbows)';  
+              }
+              otherPlayer.playerText.text = playerInfo.playerName + '\n ' + otherPlayerScore;                
+
             }
           });
         });
@@ -162,14 +169,14 @@ class UnicornGame extends Phaser.Scene
           // if current player scored then update
           if (playerInfo.playerId === self.playerId) {
             console.log('your player scored ' + playerInfo.playerName);
-            self.playername.text = playerInfo.playerName + ' ' + playerInfo.score;
+            self.playername.text = playerInfo.playerName + '\n (has ' + playerInfo.score + ' rainbows)';
           }
           // otherwise update other player
           self.otherPlayers.getChildren().forEach(function (otherPlayer) {
             if (playerInfo.playerId === otherPlayer.playerId) {
               console.log('other player scored ' + playerInfo.playerName);
               // update other player text field
-              otherPlayer.playerText.text = playerInfo.playerName + ' ' + playerInfo.score;
+              otherPlayer.playerText.text = playerInfo.playerName + '\n (has ' + playerInfo.score + ' rainbows)';
             }
           });
         });
@@ -204,7 +211,7 @@ class UnicornGame extends Phaser.Scene
     var playerName = this.inputName;
 
     console.log('Add playername: ' + playerName + ' x: ' + playerInfo.x + ' y:' + playerInfo.y);
-    this.playername = this.add.text(playerInfo.x - 60, playerInfo.y - 60, playerName, {fill: "#ff0044", align: "center", backgroundColor: "#ffff00" }); 
+    this.playername = this.add.text(playerInfo.x, playerInfo.y, playerName + ' \n (catch a rainbow)', {fontSize: '40px', fill: "#ffffff", align: "center" }); 
 
     self.playerId = playerInfo.playerId;
     self.playerName = playerName;
@@ -233,10 +240,14 @@ class UnicornGame extends Phaser.Scene
     otherPlayer.playerName = playerName;
     otherPlayer.score = playerScore;
 
-    //this.add.text(playerInfo.x, playerInfo.y, 'Other Unicorn: ' + playerName, { fontSize: '24px', fill: '#FFFFFF' });
-    var playerText = this.add.text(playerInfo.x - 60, playerInfo.y - 60, playerName, {fill: "#ff0044", align: "center", backgroundColor: "#CCCCCC" }); 
+    var otherPlayerScore = '(no rainbows)';
+    if (otherPlayer.score === 1) {
+      otherPlayerScore + '(has 1 rainbow)';
+    } else if (otherPlayer.score > 1) {
+      otherPlayerScore = '(has ' + playerInfo.score + ' rainbows)';  
+    }
+    var playerText = this.add.text(playerInfo.x - 180, playerInfo.y - 180, playerName + ' \n ' + otherPlayerScore, {fontSize: '40px', fill: "#666666", align: "center" }); 
     otherPlayer.playerText = playerText;
-
 
     self.otherPlayers.add(otherPlayer);
   }
@@ -261,8 +272,8 @@ class UnicornGame extends Phaser.Scene
       }
 
       // update player name
-      this.playername.x = this.player.x - 60;
-      this.playername.y = this.player.y - 60;
+      this.playername.x = this.player.x - 220;
+      this.playername.y = this.player.y - 180;
     
       this.physics.world.wrap(this.player, 40);
 
