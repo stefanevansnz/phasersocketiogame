@@ -4,7 +4,7 @@ class UnicornGame extends Phaser.Scene
   GAME_WIDTH;
   GAME_HEIGHT;
 
-  version = '0.3';
+  version = '0.4';
 
   backgroundScene;
   parent;
