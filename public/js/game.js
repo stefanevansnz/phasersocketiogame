@@ -4,7 +4,7 @@ class UnicornGame extends Phaser.Scene
   GAME_WIDTH;
   GAME_HEIGHT;
 
-  version = '0.2';
+  version = '0.3';
 
   backgroundScene;
   parent;
@@ -78,7 +78,7 @@ class UnicornGame extends Phaser.Scene
   startGame() {
     var name = this.inputText.text;
     console.log('start game with name ' + name);
-    if(name.value != "") {
+    if(name != "") {
         // get value and remove form
         this.inputName = name;
 
