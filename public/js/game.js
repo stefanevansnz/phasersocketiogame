@@ -21,8 +21,8 @@ class UnicornGame extends Phaser.Scene
   joyStickState = '';
 
   preload() {
-    this.load.image('player', 'assets/friendly_unicorn.png');
-    this.load.image('otherPlayer', 'assets/friendly_unicorn.png');
+    this.load.image('player', 'assets/unicorn.png');
+    this.load.image('otherPlayer', 'assets/unicorn.png');
     this.load.image('goal', 'assets/rainbow.png');
 
     var url;
@@ -216,7 +216,7 @@ class UnicornGame extends Phaser.Scene
     playerInfo.y = (playerInfo.y * self.GAME_HEIGHT / 4) + self.GAME_HEIGHT / 4;
 
     this.player = self.physics.add.sprite(playerInfo.x, playerInfo.y, 'player').setOrigin(0.5, 0.5);
-    this.player.rotation = 90;
+    //this.player.rotation = 90;
 
     var playerName = this.inputName;
 
@@ -229,9 +229,9 @@ class UnicornGame extends Phaser.Scene
     // send details like name etc back when player created
     this.socket.emit('playerCreated', { id: playerInfo.playerId , name: self.playerName });
 
-    self.player.setDrag(100);
-    self.player.setAngularDrag(100);
-    self.player.setMaxVelocity(200);
+    self.player.setDrag(50);
+    self.player.setAngularDrag(150);
+    self.player.setMaxVelocity(150);
   }
 
   addOtherPlayers(self, playerInfo) {
@@ -260,7 +260,7 @@ class UnicornGame extends Phaser.Scene
 
   update() {
     if (this.player) {
-      // update player
+      // rotate player
       if (this.cursors.left.isDown || this.joyStickState == 'Key down: left ' || this.joyStickState == 'Key down: up left ' || this.joyStickState == 'Key down: down left ') {
         this.player.setAngularVelocity(-150);
       } else if (this.cursors.right.isDown || this.joyStickState == 'Key down: right ' || this.joyStickState == 'Key down: up right ' || this.joyStickState == 'Key down: down right ') {
@@ -269,10 +269,11 @@ class UnicornGame extends Phaser.Scene
         this.player.setAngularVelocity(0);
       }
     
+      // add velocity
       if (this.cursors.up.isDown || this.joyStickState == 'Key down: up ' || this.joyStickState == 'Key down: up left ' || this.joyStickState == 'Key down: up right ') {
-        this.physics.velocityFromRotation(this.player.rotation + 1.5, 100, this.player.body.acceleration);
-      } else if (this.cursors.up.isDown || this.joyStickState == 'Key down: down ' || this.joyStickState == 'Key down: down left ' || this.joyStickState == 'Key down: down right ') {
-          this.physics.velocityFromRotation(this.player.rotation - 1.5, 0, this.player.body.acceleration);        
+        this.physics.velocityFromRotation(this.player.rotation, -100, this.player.body.acceleration);
+      } else if (this.cursors.down.isDown || this.joyStickState == 'Key down: down ' || this.joyStickState == 'Key down: down left ' || this.joyStickState == 'Key down: down right ') {
+          this.physics.velocityFromRotation(this.player.rotation, 100, this.player.body.acceleration);        
       } else {
         this.player.setAcceleration(0);
       }
