@@ -181,11 +181,14 @@ class UnicornGame extends Phaser.Scene
         this.cursors = this.input.keyboard.createCursorKeys();
         
         this.socket.on('goalLocation', function (goalLocation) {
+          console.log('removing goal x ' + goalLocation.x + ' goal y ' + goalLocation.y);
           if (self.goal) self.goal.destroy();
 
-          goalLocation.x = goalLocation.x  * self.GAME_WIDTH;
-          goalLocation.y = goalLocation.y  * self.GAME_HEIGHT;
-          console.log('goalLocation.x ' + goalLocation.x + ' goalLocation.y ' + goalLocation.y);
+          var halfWidth = self.GAME_WIDTH / 2;
+          goalLocation.x = (goalLocation.x  * halfWidth) + (halfWidth / 2);
+          goalLocation.y = goalLocation.y  * self.GAME_HEIGHT / 3;
+
+          console.log('goal x ' + goalLocation.x + ' width ' + self.GAME_WIDTH + ' goal y ' + goalLocation.y + ' height ' + self.GAME_HEIGHT);
 
           self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
 
