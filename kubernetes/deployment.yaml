@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: 915922766016.dkr.ecr.ap-southeast-2.amazonaws.com/game-repo:latest
+        image: 915922766016.dkr.ecr.ap-southeast-2.amazonaws.com/game-repo:v3
         imagePullPolicy: Always        
         ports:
           - containerPort: 3070
