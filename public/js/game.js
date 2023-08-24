@@ -4,7 +4,7 @@ class UnicornGame extends Phaser.Scene
   GAME_WIDTH;
   GAME_HEIGHT;
 
-  version = '0.5';
+  version = '0.6';
 
   backgroundScene;
   parent;
@@ -39,7 +39,7 @@ class UnicornGame extends Phaser.Scene
     this.GAME_WIDTH = this.scale.width;
     this.GAME_HEIGHT = this.scale.height;
 
-    this.welcomeText = this.add.text(this.GAME_WIDTH / 2, 100, 
+    this.welcomeText = this.add.text(this.GAME_WIDTH / 2, 150, 
       'Beta Game (v' + this.version + ')', { 
       fontSize: '40px',
       color: '#000000',
@@ -184,11 +184,16 @@ class UnicornGame extends Phaser.Scene
           console.log('removing goal x ' + goalLocation.x + ' goal y ' + goalLocation.y);
           if (self.goal) self.goal.destroy();
 
+          // place next goal (rainbow)
           var halfWidth = self.GAME_WIDTH / 2;
+          var halfHeight = self.GAME_HEIGHT / 2;
+          var thirdHeight = self.GAME_HEIGHT / 3;
+        
           goalLocation.x = (goalLocation.x  * halfWidth) + (halfWidth / 2);
-          goalLocation.y = goalLocation.y  * self.GAME_HEIGHT / 3;
+          goalLocation.y = (goalLocation.y  * thirdHeight) + (halfHeight / 2);
 
-          console.log('goal x ' + goalLocation.x + ' width ' + self.GAME_WIDTH + ' goal y ' + goalLocation.y + ' height ' + self.GAME_HEIGHT);
+          console.log('placed goal x:' + goalLocation.x + ' in width :' + self.GAME_WIDTH); 
+          console.log('       goal y:' + goalLocation.y + ' in height:' + self.GAME_HEIGHT);
 
           self.goal = self.physics.add.image(goalLocation.x, goalLocation.y, 'goal');
 

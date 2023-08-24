@@ -74,3 +74,34 @@ kubectl apply -f service-nodeport.yaml
 kubectl apply -f ingress.yaml
 ```
 Applying the “ingress controller” above actually triggers off the creation of an AWS ALB (Application Load Balancer) which you should be able to see in your AWS Console under the EC2. Use this to access the URL for the game.
+
+Please note the user needs the permissions below:
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "eks:ListFargateProfiles",
+                "eks:DescribeNodegroup",
+                "eks:ListNodegroups",
+                "eks:ListUpdates",
+                "eks:AccessKubernetesApi",
+                "eks:ListAddons",
+                "eks:DescribeCluster",
+                "eks:DescribeAddonVersions",
+                "eks:ListClusters",
+                "eks:ListIdentityProviderConfigs",
+                "iam:ListRoles"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "ssm:GetParameter",
+            "Resource": "arn:aws:ssm:*:<<ACCOUNT_ID>>:parameter/*"
+        }
+    ]
+}
+```
