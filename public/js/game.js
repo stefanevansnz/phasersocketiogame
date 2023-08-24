@@ -92,7 +92,7 @@ class UnicornGame extends Phaser.Scene
         this.parent.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
         this.sizer.setSize(this.GAME_WIDTH, this.GAME_HEIGHT);
     
-        //console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHT);
+        console.log('game size width: ' + this.GAME_WIDTH + ' height: ' + this.GAME_HEIGHT);
     
         //this.updateCamera();
     
