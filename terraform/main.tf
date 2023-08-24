@@ -34,30 +34,6 @@ resource "local_file" "kubeconfig" {
   filename = "kubeconfig_${local.cluster_name}"
 }
 
-module "vpc" {
-  source  = "terraform-aws-modules/vpc/aws"
-  version = "5.1.1"
-
-  name                 = "game-vpc"
-  cidr                 = "172.16.0.0/16"
-  azs                  = ["ap-southeast-2a", "ap-southeast-2b"]
-  private_subnets      = ["172.16.1.0/24", "172.16.2.0/24"]
-  public_subnets       = ["172.16.3.0/24", "172.16.4.0/24"]
-  enable_nat_gateway   = true
-  single_nat_gateway   = true
-  enable_dns_hostnames = true
-
-  public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/elb"                      = "1"
-  }
-
-  private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
-    "kubernetes.io/role/internal-elb"             = "1"
-  }
-}
-
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "18.30.3"
@@ -76,6 +52,7 @@ module "eks" {
       instance_type = "t3.medium"
     }
   }
+
   node_security_group_additional_rules = {
     ingress_allow_access_from_control_plane = {
       type                          = "ingress"
@@ -86,6 +63,7 @@ module "eks" {
       description                   = "Allow access from control plane to webhook port of AWS load balancer controller"
     }
   }
+
 }
 
 resource "aws_iam_policy" "worker_policy" {
