@@ -105,3 +105,37 @@ Please note the user needs the permissions below:
     ]
 }
 ```
+export AWS_PROFILE=sandpit
+
+eksctl get iamidentitymapping --cluster gamecluster --region=ap-southeast-2
+
+eksctl create iamidentitymapping \
+    --cluster gamecluster \
+    --region=ap-southeast-2 \
+    --arn arn:aws:iam::915922766016:role/my-console-viewer-role \
+    --group eks-console-dashboard-full-access-group \
+    --no-duplicate-arns
+
+eksctl create iamidentitymapping \
+    --cluster gamecluster \
+    --region=ap-southeast-2 \
+    --arn arn:aws:iam::915922766016:user/stefan.evans@consegna.cloud  \
+    --group eks-console-dashboard-full-access-group \
+    --no-duplicate-arns
+
+eksctl delete iamidentitymapping \
+    --cluster gamecluster \
+    --region=ap-southeast-2 \
+    --arn arn:aws:iam::915922766016:user/stefan.evans@consegna.cloud  \
+
+my-console-viewer-role
+
+eks_viewer
+
+eksctl create iamidentitymapping \
+    --cluster gamecluster \
+    --region=ap-southeast-2 \
+    --arn arn:aws:iam::915922766016:user/eks_viewer  \
+    --group eks-console-dashboard-full-access-group \
+    --no-duplicate-arns
+
