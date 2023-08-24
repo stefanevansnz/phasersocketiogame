@@ -13,8 +13,7 @@ phases:
       - export AWS_SECRET_ACCESS_KEY="$(echo ${CREDENTIALS} | jq -r '.Credentials.SecretAccessKey')"
       - export AWS_SESSION_TOKEN="$(echo ${CREDENTIALS} | jq -r '.Credentials.SessionToken')"
       - export AWS_EXPIRATION=$(echo ${CREDENTIALS} | jq -r '.Credentials.Expiration')
-      - aws sts get-caller-identity
-      - echo Update KubeConfig      
+      - aws sts get-caller-identity    
       - aws eks update-kubeconfig --name gamecluster --region ap-southeast-2
       - kubectl config set-context --current --namespace=games      
       - kubectl get pods
