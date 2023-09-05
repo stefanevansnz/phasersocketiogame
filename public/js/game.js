@@ -4,7 +4,7 @@ class UnicornGame extends Phaser.Scene
   GAME_WIDTH;
   GAME_HEIGHT;
 
-  version = '0.7';
+  version = '0.8';
 
   backgroundScene;
   parent;
@@ -25,11 +25,18 @@ class UnicornGame extends Phaser.Scene
     this.load.image('otherPlayer', 'assets/unicorn.png');
     this.load.image('goal', 'assets/rainbow.png');
 
+    // var url;
+    // url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
+    // this.load.plugin('rexvirtualjoystickplugin', url, true);
+
+    // this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+
     var url;
-    url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexvirtualjoystickplugin.min.js';
+    url = 'js/rexvirtualjoystickplugin.min.js';
     this.load.plugin('rexvirtualjoystickplugin', url, true);
 
-    this.load.plugin('rexinputtextplugin', 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexinputtextplugin.min.js', true);
+    this.load.plugin('rexinputtextplugin', 'js/rexinputtextplugin.min.js', true);
+
   }
 
   create() {
